@@ -18,17 +18,17 @@ By default, hg38 (v3) is used for alignment!
 
 ## Usage:
 
-Main options:
-  --help                print this help message
-
-  --runfolder           Path to runfolder (required)
-
-  --samplesheet         Path to samplesheet (required)
-
-  --localStorage        If set, all output data (fastq and CRAM) will be stored locally in output folder where the script is started.
-                            Default: Not set. Data are by default stored at the archive (see description above)
-
-  --DNA                 Demultiplex DNA samples
+>Main options:
+ > --help                print this help message
+>
+>  --runfolder           Path to runfolder (required)
+>
+>  --samplesheet         Path to samplesheet (required)
+>
+>  --localStorage        If set, all output data (fastq and CRAM) will be stored locally in output folder where the script is started.
+>                           Default: Not set. Data are by default stored at the archive (see description above)
+>
+>  --DNA                 Demultiplex DNA samples
 
   --RNA                 Demultiplex RNA samples
 
