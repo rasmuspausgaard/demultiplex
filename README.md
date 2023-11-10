@@ -16,37 +16,4 @@ Data can be stored locally in the folder where the script is started instead by 
 
 By default, hg38 (v3) is used for alignment!
 
-## Usage:
-
->Main options:
- > --help                print this help message
->
->  --runfolder           Path to runfolder (required)
->
->  --samplesheet         Path to samplesheet (required)
->
->  --localStorage        If set, all output data (fastq and CRAM) will be stored locally in output folder where the script is started.
->                           Default: Not set. Data are by default stored at the archive (see description above)
->
->  --DNA                 Demultiplex DNA samples
-
-  --RNA                 Demultiplex RNA samples
-
-  --useBasesMask        manually set "--use-bases-mask" parameter for demultiplexing.
-                        Default for demultiplexing DNA-only runs (I1=8 bp and I2=17 bp):
-                        DNA samples: Y*,I8nnnnnnnnn,I8,Y
-                        Default for demultiplexing both DNA- and RNA-samples (I1=10 bp and I2=19 bp):
-                        DNA samples:"Y*,I8nnnnnnnnnnn,I8nn,Y*"
-                        RNA samples: "Y*,I10nnnnnnnnn,I10,Y*"
-
-  --skipAlign           Do not perform preprocessing and alignment (i.e. only demultiplexing)
-                            Default: Not set (i.e. run preprocessing and alignment)
-
-  --alignRNA            Align RNA samples (STAR 2-pass). Alignment will be run twice using the reccomended parameters for e.g. Arriba or STAR-fusion.
-                            Default: Do not align RNA samples.
-
-  --server              Choose server to run script from (lnx01 or kga01)
-                            Default: kga01
-
-  --genome               hg19 or hg38
-                            Default: hg38v3
+Run the script with --help to see available options and default settings.
