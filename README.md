@@ -1,1 +1,1 @@
-# NGS demultiplex and preprocessing script, KG Vejle
+NGS demultiplex and preprocessing script, KG Vejle
