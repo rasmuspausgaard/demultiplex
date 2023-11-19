@@ -8,10 +8,10 @@ PLEASE NOTE: The script will automatically perform preprocesssing and alignment 
 
 The resulting CRAM and FastQ files will be available from the data archive location from each server as read-only folders:
 
-# CRAM
+CRAM:
 ../dataArchive/tank_kga_external_archive/alignedData/{genomeversion}/novaRuns/runfolder
 
-# FASTQ:
+FASTQ:
 ../dataArchive/tank_kga_external_archive/fastq_storage/novaRuns/runfolder
 
 Data can be stored locally in the folder where the script is started instead by using the --localStorage option
