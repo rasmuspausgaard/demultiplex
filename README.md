@@ -6,10 +6,10 @@ There is no need to manually edit the samplesheet: The script will automatically
 
 PLEASE NOTE: The script will automatically perform preprocesssing and alignment of DNA samples. Fastq and aligned CRAM files will automatically be transferred to the long term storage location. This means no Fastq or aligned CRAM files will be found where the script is executed - only in the long term storage (dataArchive) location.
 
-The resulting CRAM files will be available from the data archive location from each server as read-only locations:
+The resulting CRAM files will be available from the data archive location from each server as read-only folders:
 ../dataArchive/tank_kga_external_archive/alignedData/{genomeversion}/novaRuns/runfolder
 
-The resulting FastQ files will be available from the data archive location from each server as read-only locations:
+The resulting FastQ files will be available from the data archive location from each server as read-only folders:
 ../dataArchive/tank_kga_external_archive/fastq_storage/novaRuns/runfolder
 
 Data can be stored locally in the folder where the script is started instead by using the --localStorage option
