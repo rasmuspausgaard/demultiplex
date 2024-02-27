@@ -23,6 +23,7 @@ params.hg38v2                   =null
 params.useBasesMask             =null
 params.alignRNA                 =null
 params.gatk                     =null
+params.keepwork			=null
 
 // Variables:
 runID="${date}.${user}.demultiV1"
@@ -101,6 +102,10 @@ def helpMessage() {
 
       --genome               hg19 or hg38
                                 Default: hg38v3
+
+      --keepwork            manually set "--keepwork" if you want to keep the work directory
+				Default: not set - removes the Work dorectory when complete.
+			    
 
     """.stripIndent()
 }
@@ -383,4 +388,41 @@ if (params.RNA && params.alignRNA) {
         """
     }
     */
-    
+
+
+
+workflow.onComplete {
+    // Check if the current user and server meet the specified conditions
+    if (System.getenv("USER") in ["raspau", "mmaj"] && params.server == "lnx01") {
+        // Extract the first 6 characters from the samplesheet name if provided
+        def sequencingRun = params.samplesheet ? new File(params.samplesheet).getName().take(6) : "Not provided"
+
+        // Determine DNA and RNA flags status
+        def dnaStatus = params.DNA ? "True" : "False"
+        def rnaStatus = params.RNA ? "True" : "False"
+
+        // Prepare the email body with the pipeline execution summary
+        def body = """\
+        Pipeline execution summary
+        ---------------------------
+        Demultiplexing completed
+        Sequencing run      : ${sequencingRun}
+        DNA processing      : ${dnaStatus}
+        RNA processing      : ${rnaStatus}
+        Output directory    : ${params.outdir}
+        """
+
+        // Send the email to the specified recipients
+        sendMail(
+            to: 'Andreas.Braae.Holmgaard@rsyd.dk,Annabeth.Hogh.Petersen@rsyd.dk,Isabella.Almskou@rsyd.dk,Jesper.Graakjaer@rsyd.dk,Lene.Bjornkjaer@rsyd.dk,Martin.Sokol@rsyd.dk,Mads.Jorgensen@rsyd.dk,Rasmus.Hojrup.Pausgaard@rsyd.dk,Signe.Skou.Tofteng@rsyd.dk',
+            subject: 'Pipeline Update',
+            body: body
+        )
+    }
+
+    // Handle deletion of the work directory based on the --keepwork parameter
+    if (!params.keepwork) {
+        println("Deleting work directory: ${workflow.workDir}")
+        "rm -rf ${workflow.workDir}".execute()
+    }
+}
