@@ -324,6 +324,7 @@ process markDup_cram {
     -o ${sampleID}.${params.genome}.${genome_version}.BWA.MD.cram -
 
     samtools index ${sampleID}.${params.genome}.${genome_version}.BWA.MD.cram
+    samtools idxstats ${sampleID}.${params.genome}.${genome_version}.BWA.MD.cram > ${sampleID}.${params.genome}.${genome_version}.BWA.MD.idxstats
     """
 }
 
