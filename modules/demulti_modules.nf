@@ -312,7 +312,7 @@ process markDup_cram {
     tuple val(sampleID), path(bam), val(runfolder_basename)// from md_input1
     
     output:
-    tuple val(sampleID), path("${sampleID}.${params.genome}.${genome_version}.BWA.MD.cram"), path("${sampleID}.${params.genome}.${genome_version}.BWA.MD*crai")// into (cramout_1,cramout_2)
+    tuple val(sampleID), path("${sampleID}.${params.genome}.${genome_version}.BWA.MD.cram"), path("${sampleID}.${params.genome}.${genome_version}.BWA.MD*crai", path("${sampleID}.${params.genome}.${genome_version}.BWA.MD.idxstats")// into (cramout_1,cramout_2)
     
     script:
     """
