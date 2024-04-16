@@ -18,12 +18,23 @@ switch (params.gatk) {
     gatk_image="gatk4400.sif";
     break;
     default:
-    gatk_image="gatk419.sif";
+    gatk_image="gatk4400.sif";
     break;
 }
 
 
 switch (params.server) {
+
+    case 'lnx02':
+        s_bind="/data/:/data/,/lnx01_data2/:/lnx01_data2/,/fast/:/fast/,/lnx01_data3/:/lnx01_data3/";
+        simgpath="/data/shared/programmer/simg";
+        params.intervals_list="/data/shared/genomes/hg38/interval.files/WGS_splitIntervals/wgs_splitinterval_BWI_subdivision3/*.interval_list";
+        tmpDIR="/data/TMP/TMP.${user}/";
+        gatk_exec="singularity run -B ${s_bind} ${simgpath}/${gatk_image} gatk";
+        multiqc_config="/data/shared/programmer/configfiles/multiqc_config.yaml"
+        dataStorage="/lnx01_data3/storage/";
+        //modules_dir="/home/mmaj/scripts_lnx01/nextflow_lnx01/dsl2/modules/";
+    break;
     case 'lnx01':
         s_bind="/data/:/data/,/lnx01_data2/:/lnx01_data2/";
         simgpath="/data/shared/programmer/simg";
@@ -31,7 +42,7 @@ switch (params.server) {
         tmpDIR="/data/TMP/TMP.${user}/";
         gatk_exec="singularity run -B ${s_bind} ${simgpath}/${gatk_image} gatk";
         multiqc_config="/data/shared/programmer/configfiles/multiqc_config.yaml"
-        tank_storage="/home/mmaj/tank.kga2/data/data.storage.archive/";
+        dataStorage="/lnx01_data3/storage/";
         modules_dir="/home/mmaj/scripts_lnx01/nextflow_lnx01/dsl2/modules/";
     break;
     case 'kga01':
@@ -40,7 +51,7 @@ switch (params.server) {
         tmpDIR="/data/TMP/TMP.${user}/";
         params.intervals_list="/data/shared/genomes/hg38/interval.files/WGS_splitIntervals/wgs_splitinterval_BWI_subdivision3/*.interval_list";
         gatk_exec="singularity run -B ${s_bind} ${simgpath}/${gatk_image} gatk";
-        tank_storage="/home/mmaj/tank.kga/data/data.storage.archive/";
+        dataStorage="/home/mmaj/tank.kga/data/data.storage.archive/";
         modules_dir="/home/mmaj/LNX01_mmaj/scripts_lnx01/nextflow_lnx01/dsl2/modules/";
     break;
 }
@@ -109,8 +120,8 @@ aln_output_dir="${params.outdir}/"
 fastq_dir="${params.outdir}/"
 }
 if (!params.localStorage) {
-aln_output_dir="${tank_storage}/alignedData/${params.genome}/novaRuns/"
-fastq_dir="${tank_storage}/fastq_storage/novaRuns/"
+aln_output_dir="${dataStorage}/alignedData/${params.genome}/novaRuns/2024/"
+fastq_dir="${dataStorage}/fastqStorage/novaRuns/"
 }
 
 
@@ -220,8 +231,8 @@ process fastq_to_ubam {
     tag "$sampleID"
     //publishDir "${params.outdir}/unmappedBAM/", mode: 'copy',pattern: '*.{bam,bai}'
     //publishDir "${params.outdir}/${runfolder_basename}/fastq_symlinks/", mode: 'link', pattern:'*.{fastq,fq}.gz'
-    cpus 20
-    maxForks 10
+    cpus 2
+    maxForks 30
 
     input:
     tuple val(sampleID), path(r1),path(r2),val(runfolder_basename)// from sorted_input_ch1
@@ -268,7 +279,7 @@ process align {
 
     maxForks 10
     errorStrategy 'ignore'
-    cpus 20
+    cpus 60
 
     input:
     tuple val(sampleID), path(uBAM),  val(runfolder_basename), path(metrics)//  from ubamXT_out
@@ -304,7 +315,7 @@ process align {
 
 process markDup_cram {
     errorStrategy 'ignore'
-    maxForks 6
+    maxForks 16
     tag "$sampleID"
     publishDir "${aln_output_dir}/${runfolder_basename}/", mode: 'copy', pattern: "*.BWA.MD.cr*"
     
@@ -312,7 +323,7 @@ process markDup_cram {
     tuple val(sampleID), path(bam), val(runfolder_basename)// from md_input1
     
     output:
-    tuple val(sampleID), path("${sampleID}.${params.genome}.${genome_version}.BWA.MD.cram"), path("${sampleID}.${params.genome}.${genome_version}.BWA.MD*crai", path("${sampleID}.${params.genome}.${genome_version}.BWA.MD.idxstats")// into (cramout_1,cramout_2)
+    tuple val(sampleID), path("${sampleID}.${params.genome}.${genome_version}.BWA.MD.cram"), path("${sampleID}.${params.genome}.${genome_version}.BWA.MD*crai")// into (cramout_1,cramout_2)
     
     script:
     """
@@ -324,9 +335,7 @@ process markDup_cram {
     -o ${sampleID}.${params.genome}.${genome_version}.BWA.MD.cram -
 
     samtools index ${sampleID}.${params.genome}.${genome_version}.BWA.MD.cram
-    samtools idxstats ${sampleID}.${params.genome}.${genome_version}.BWA.MD.cram > ${sampleID}.${params.genome}.${genome_version}.BWA.MD.idxstats
     """
 }
-
 
 
