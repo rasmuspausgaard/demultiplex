@@ -268,6 +268,28 @@ workflow.onComplete {
         }
     }
 
+    println "Creating symlinks for .cram and .crai files..."
+    
+    if (params.server == 'lnx02') {
+        // Define the source and target directories
+        def currentYear = Calendar.getInstance().get(Calendar.YEAR)
+        def sourceDir = "/lnx01_data3/storage/alignedData/hg38/novaRuns/${currentYear}/${runfolder_basename}"
+        def targetLinkDir = "/lnx01_data2/shared/dataArchive/lnx02/alignedData/hg38/novaRuns/${currentYear}/${runfolder_basename}"
+
+        // Ensure the target directory for symlinks exists
+        new File(targetLinkDir).mkdirs()
+
+        // Fetch all .cram and .crai files from the source directory and create symlinks
+        new File(sourceDir).eachFileMatch(~/.*\.(cram|crai)$/) { File file ->
+            def targetFile = new File(targetLinkDir, file.name)
+            java.nio.file.Files.createSymbolicLink(targetFile.toPath(), file.toPath())
+        }
+
+        println "Symlinks created in: ${targetLinkDir}"
+    }
+    
+    
+    
     // Handle deletion of WorkDir based on --keepwork parameter
     if (!params.keepwork && workflow.duration > 1200000 && workflow.success) {
         println("Deleting work directory: ${workflow.workDir}")
