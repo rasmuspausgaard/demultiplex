@@ -1,3 +1,4 @@
+
 #!/usr/bin/env nextflow
 nextflow.enable.dsl = 2
 user="$USER"
@@ -238,7 +239,7 @@ workflow {
     }
 }
 
-
+/*
 workflow.onComplete {
 
     // Extract the first six digits from the samplesheet name
@@ -274,3 +275,4 @@ workflow.onComplete {
         "rm -rf ${workflow.workDir}".execute()
     }
 }
+*/
